@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>审计系统 - 提示词管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f6fa;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .page-header {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .page-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .page-desc {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .create-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+        
+        .create-section h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+        }
+        
+        .create-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .create-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .prompts-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            color: #333;
+        }
+        
+        .refresh-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .refresh-btn:hover {
+            background: #5a6268;
+        }
+        
+        .search-box {
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .prompts-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .prompt-card {
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .prompt-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+        
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .prompt-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .prompt-meta {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .prompt-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-small:hover {
+            transform: translateY(-1px);
+        }
+        
+        .prompt-content {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-icon {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-info {
+            background-color: #cce7ff;
+            color: #004085;
+            border: 1px solid #b8d4f0;
+        }
+        
+        .template-suggestions {
+            margin-bottom: 20px;
+        }
+        
+        .template-btn {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 5px 5px 5px 0;
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .template-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+        
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .close:hover {
+            color: #333;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .prompt-actions {
+                flex-direction: column;
+            }
+            
+            .template-btn {
+                display: block;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">审计系统 - 提示词管理</div>
+            <div class="nav-links">
+                <a href="/dashboard">仪表板</a>
+                <a href="/contracts">合同管理</a>
+                <a href="/prompts">提示词管理</a>
+                <a href="/extract">信息提取</a>
+                <a href="/logout">退出</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Flash消息显示区域 -->
+        <div id="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <h1 class="page-title">提示词管理</h1>
+            <p class="page-desc">创建、编辑和管理用于合同信息提取的提示词模板</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- 创建提示词 -->
+            <div class="create-section">
+                <h3>创建提示词</h3>
+                
+                <div class="template-suggestions">
+                    <label>常用模板：</label>
+                    <div>
+                        <span class="template-btn" onclick="loadTemplate('basic')">基础信息提取</span>
+                        <span class="template-btn" onclick="loadTemplate('financial')">财务条款</span>
+                        <span class="template-btn" onclick="loadTemplate('risk')">风险评估</span>
+                        <span class="template-btn" onclick="loadTemplate('timeline')">时间节点</span>
+                    </div>
+                </div>
+                
+                <form id="createPromptForm">
+                    <div class="form-group">
+                        <label for="promptName">提示词名称</label>
+                        <input type="text" id="promptName" name="name" required placeholder="请输入提示词名称">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="promptContent">提示词内容</label>
+                        <textarea id="promptContent" name="content" required 
+                                placeholder="请输入提示词内容，例如：&#10;&#10;请从以下合同中提取关键信息：&#10;1. 合同双方&#10;2. 合同金额&#10;3. 履行期限&#10;4. 付款条件&#10;&#10;请以JSON格式输出结果。"></textarea>
+                        <div class="char-counter">
+                            <span id="charCount">0</span> 字符
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="create-btn" id="createBtn">创建提示词</button>
+                </form>
+            </div>
+            
+            <!-- 提示词列表 -->
+            <div class="prompts-section">
+                <div class="section-header">
+                    <h3 class="section-title">提示词列表</h3>
+                    <button class="refresh-btn" onclick="loadPrompts()">刷新</button>
+                </div>
+                
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="搜索提示词名称或内容...">
+                </div>
+                
+                <div class="loading" id="promptsLoading">
+                    <div class="loading-spinner"></div>
+                    <div>加载中...</div>
+                </div>
+                
+                <div id="promptsContainer">
+                    <div class="prompts-grid" id="promptsGrid">
+                        <!-- 动态加载的提示词列表 -->
+                    </div>
+                    
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <div class="empty-icon">💭</div>
+                        <h3>暂无提示词</h3>
+                        <p>请创建第一个提示词开始使用</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 编辑提示词模态框 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">编辑提示词</h3>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            
+            <form id="editPromptForm">
+                <input type="hidden" id="editPromptId">
+                <div class="form-group">
+                    <label for="editPromptName">提示词名称</label>
+                    <input type="text" id="editPromptName" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editPromptContent">提示词内容</label>
+                    <textarea id="editPromptContent" name="content" required rows="10"></textarea>
+                    <div class="char-counter">
+                        <span id="editCharCount">0</span> 字符
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                    <button type="submit" class="create-btn" style="flex: 1;">保存修改</button>
+                    <button type="button" class="refresh-btn" style="flex: 1;" onclick="closeEditModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let prompts = [];
+        let editingPromptId = null;
+        
+        // 提示词模板
+        const templates = {
+            basic: {
+                name: '基础信息提取',
+                content: `请从以下合同中提取关键信息，并以JSON格式输出：
+
+{
+  "合同名称": "",
+  "甲方": "",
+  "乙方": "",
+  "合同金额": "",
+  "签署日期": "",
+  "履行期限": "",
+  "主要内容": ""
+}
+
+请确保提取的信息准确完整。`
+            },
+            financial: {
+                name: '财务条款提取',
+                content: `请提取合同中的财务相关条款，并以JSON格式输出：
+
+{
+  "合同总金额": "",
+  "付款方式": "",
+  "付款时间": "",
+  "违约金": "",
+  "保证金": "",
+  "税费承担": "",
+  "发票要求": ""
+}
+
+重点关注金额、支付条件和财务风险条款。`
+            },
+            risk: {
+                name: '风险评估提取',
+                content: `请分析合同中的风险条款，并以JSON格式输出：
+
+{
+  "主要风险点": [],
+  "违约责任": "",
+  "免责条款": "",
+  "争议解决": "",
+  "不可抗力": "",
+  "保险要求": "",
+  "风险等级": ""
+}
+
+请识别潜在的法律风险和财务风险。`
+            },
+            timeline: {
+                name: '时间节点提取',
+                content: `请提取合同中的重要时间节点，并以JSON格式输出：
+
+{
+  "合同签署日期": "",
+  "生效日期": "",
+  "履行开始时间": "",
+  "关键里程碑": [],
+  "完成日期": "",
+  "验收时间": "",
+  "保修期": ""
+}
+
+请按时间顺序整理所有重要日期。`
+            }
+        };
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPrompts();
+            initForm();
+            initSearch();
+            
+            // 自动隐藏flash消息
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 300);
+                }, 5000);
+            });
+        });
+        
+        // 初始化表单
+        function initForm() {
+            const form = document.getElementById('createPromptForm');
+            const contentTextarea = document.getElementById('promptContent');
+            const charCount = document.getElementById('charCount');
+            const editContentTextarea = document.getElementById('editPromptContent');
+            const editCharCount = document.getElementById('editCharCount');
+            
+            // 字符计数
+            contentTextarea.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+            });
+            
+            editContentTextarea.addEventListener('input', function() {
+                editCharCount.textContent = this.value.length;
+            });
+            
+            // 表单提交
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                createPrompt();
+            });
+            
+            // 编辑表单提交
+            document.getElementById('editPromptForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                updatePrompt();
+            });
+        }
+        
+        // 加载模板
+        function loadTemplate(templateKey) {
+            const template = templates[templateKey];
+            if (template) {
+                document.getElementById('promptName').value = template.name;
+                document.getElementById('promptContent').value = template.content;
+                document.getElementById('charCount').textContent = template.content.length;
+            }
+        }
+        
+        // 创建提示词
+        function createPrompt() {
+            const name = document.getElementById('promptName').value;
+            const content = document.getElementById('promptContent').value;
+            const createBtn = document.getElementById('createBtn');
+            
+            if (!name || !content) {
+                showAlert('请填写完整信息', 'error');
+                return;
+            }
+            
+            createBtn.disabled = true;
+            createBtn.textContent = '创建中...';
+            
+            fetch('/api/prompts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showAlert(data.error, 'error');
+                } else {
+                    showAlert('提示词创建成功！', 'success');
+                    document.getElementById('createPromptForm').reset();
+                    document.getElementById('charCount').textContent = '0';
+                    loadPrompts();
+                }
+            })
+            .catch(error => {
+                console.error('创建提示词失败:', error);
+                showAlert('创建提示词失败！', 'error');
+            })
+            .finally(() => {
+                createBtn.disabled = false;
+                createBtn.textContent = '创建提示词';
+            });
+        }
+        
+        // 加载提示词列表
+        function loadPrompts() {
+            const loading = document.getElementById('promptsLoading');
+            const container = document.getElementById('promptsContainer');
+            const emptyState = document.getElementById('emptyState');
+            
+            loading.style.display = 'block';
+            container.style.display = 'none';
+            
+            fetch('/api/prompts')
+                .then(response => response.json())
+                .then(data => {
+                    prompts = data;
+                    renderPrompts(prompts);
+                    loading.style.display = 'none';
+                    
+                    if (prompts.length === 0) {
+                        emptyState.style.display = 'block';
+                        document.getElementById('promptsGrid').style.display = 'none';
+                    } else {
+                        emptyState.style.display = 'none';
+                        document.getElementById('promptsGrid').style.display = 'grid';
+                        container.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('加载提示词列表失败:', error);
+                    showAlert('加载提示词列表失败！', 'error');
+                    loading.style.display = 'none';
+                    emptyState.style.display = 'block';
+                });
+        }
+        
+        // 渲染提示词列表
+        function renderPrompts(promptList) {
+            const grid = document.getElementById('promptsGrid');
+            
+            grid.innerHTML = promptList.map(prompt => `
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div>
+                            <div class="prompt-name">${prompt.name}</div>
+                            <div class="prompt-meta">
+                                创建者: ${prompt.created_by || '未知'} | 
+                                创建时间: ${formatDate(prompt.created_at)}
+                            </div>
+                        </div>
+                        <div class="prompt-actions">
+                            <button class="btn-small btn-edit" onclick="editPrompt(${prompt.id})">
+                                编辑
+                            </button>
+                            <button class="btn-small btn-delete" onclick="deletePrompt(${prompt.id})">
+                                删除
+                            </button>
+                        </div>
+                    </div>
+                    <div class="prompt-content">${prompt.content}</div>
+                </div>
+            `).join('');
+        }
+        
+        // 初始化搜索功能
+        function initSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function(e) {
+                const keyword = e.target.value.toLowerCase();
+                const filtered = prompts.filter(prompt => 
+                    prompt.name.toLowerCase().includes(keyword) ||
+                    prompt.content.toLowerCase().includes(keyword)
+                );
+                renderPrompts(filtered);
+            });
+        }
+        
+        // 编辑提示词
+        function editPrompt(promptId) {
+            const prompt = prompts.find(p => p.id === promptId);
+            if (prompt) {
+                editingPromptId = promptId;
+                document.getElementById('editPromptId').value = promptId;
+                document.getElementById('editPromptName').value = prompt.name;
+                document.getElementById('editPromptContent').value = prompt.content;
+                document.getElementById('editCharCount').textContent = prompt.content.length;
+                document.getElementById('editModal').style.display = 'block';
+            }
+        }
+        
+        // 更新提示词
+        function updatePrompt() {
+            const name = document.getElementById('editPromptName').value;
+            const content = document.getElementById('editPromptContent').value;
+            
+            if (!name || !content) {
+                showAlert('请填写完整信息', 'error');
+                return;
+            }
+            
+            // 这里应该调用更新API，目前先模拟
+            showAlert('提示词更新功能将在后续版本中实现', 'info');
+            closeEditModal();
+        }
+        
+        // 关闭编辑模态框
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            editingPromptId = null;
+        }
+        
+        // 删除提示词
+        function deletePrompt(promptId) {
+            const prompt = prompts.find(p => p.id === promptId);
+            if (prompt && confirm(`确定要删除提示词 "${prompt.name}" 吗？`)) {
+                showAlert('删除功能将在后续版本中实现', 'info');
+            }
+        }
+        
+        // 格式化日期
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // 显示提示消息
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            const flashMessages = document.getElementById('flash-messages');
+            flashMessages.appendChild(alertDiv);
+            
+            // 5秒后自动消失
+            setTimeout(() => {
+                alertDiv.style.opacity = '0';
+                alertDiv.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 300);
+            }, 5000);
+        }
+        
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                closeEditModal();
+            }
+        }
+    </script>
+</body>
+</html>
