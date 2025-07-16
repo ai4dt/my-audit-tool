@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>审计系统 - 仪表板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f6fa;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-name {
+            font-size: 16px;
+        }
+        
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .nav-menu {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-menu h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .nav-btn {
+            display: block;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+        
+        .nav-btn i {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-desc {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .recent-activity {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .recent-activity h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 20px;
+        }
+        
+        .activity-list {
+            list-style: none;
+        }
+        
+        .activity-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .activity-time {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .quick-actions {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .quick-actions h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-info {
+            background-color: #cce7ff;
+            color: #004085;
+            border: 1px solid #b8d4f0;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">审计系统</div>
+            <div class="user-info">
+                <span class="user-name">欢迎, {{ session.username }}</span>
+                <span class="user-name">角色: {{ session.role }}</span>
+                <a href="/logout" class="logout-btn">退出</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Flash消息显示区域 -->
+        <div id="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <!-- 导航菜单 -->
+        <div class="nav-menu">
+            <h3>功能导航</h3>
+            <div class="nav-buttons">
+                <a href="/contracts" class="nav-btn">
+                    <i>📄</i>
+                    合同管理
+                </a>
+                <a href="/prompts" class="nav-btn">
+                    <i>💭</i>
+                    提示词管理
+                </a>
+                <a href="/extract" class="nav-btn">
+                    <i>🔍</i>
+                    信息提取
+                </a>
+                <a href="/settings" class="nav-btn">
+                    <i>⚙️</i>
+                    系统设置
+                </a>
+            </div>
+        </div>
+        
+        <!-- 统计信息 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="contractCount">-</div>
+                <div class="stat-label">合同总数</div>
+                <div class="stat-desc">已上传的合同文件</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="promptCount">-</div>
+                <div class="stat-label">提示词数量</div>
+                <div class="stat-desc">可用的提示词模板</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="extractionCount">-</div>
+                <div class="stat-label">提取次数</div>
+                <div class="stat-desc">已完成的信息提取</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="userCount">-</div>
+                <div class="stat-label">用户数量</div>
+                <div class="stat-desc">系统注册用户</div>
+            </div>
+        </div>
+        
+        <!-- 最近活动 -->
+        <div class="recent-activity">
+            <h3>最近活动</h3>
+            <div class="loading" id="activityLoading">
+                <div class="loading-spinner"></div>
+                <div>加载中...</div>
+            </div>
+            <ul class="activity-list" id="activityList">
+                <!-- 动态加载的活动列表 -->
+            </ul>
+        </div>
+        
+        <!-- 快速操作 -->
+        <div class="quick-actions">
+            <h3>快速操作</h3>
+            <div class="action-buttons">
+                <a href="/contracts" class="action-btn">上传合同</a>
+                <a href="/prompts" class="action-btn">创建提示词</a>
+                <a href="/extract" class="action-btn">开始提取</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStatistics();
+            loadRecentActivity();
+            
+            // 自动隐藏flash消息
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 300);
+                }, 5000);
+            });
+        });
+        
+        // 加载统计信息
+        function loadStatistics() {
+            // 加载合同数量
+            fetch('/api/contracts')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('contractCount').textContent = data.length;
+                })
+                .catch(error => {
+                    console.error('加载合同统计失败:', error);
+                    document.getElementById('contractCount').textContent = '0';
+                });
+            
+            // 加载提示词数量
+            fetch('/api/prompts')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('promptCount').textContent = data.length;
+                })
+                .catch(error => {
+                    console.error('加载提示词统计失败:', error);
+                    document.getElementById('promptCount').textContent = '0';
+                });
+            
+            // 模拟其他统计数据
+            setTimeout(() => {
+                document.getElementById('extractionCount').textContent = '0';
+                document.getElementById('userCount').textContent = '1';
+            }, 500);
+        }
+        
+        // 加载最近活动
+        function loadRecentActivity() {
+            const activityLoading = document.getElementById('activityLoading');
+            const activityList = document.getElementById('activityList');
+            
+            activityLoading.style.display = 'block';
+            
+            // 模拟加载活动数据
+            setTimeout(() => {
+                const activities = [
+                    {
+                        icon: '👤',
+                        title: '用户登录',
+                        time: '刚刚',
+                        desc: '{{ session.username }} 登录系统'
+                    },
+                    {
+                        icon: '🏠',
+                        title: '系统启动',
+                        time: '今天',
+                        desc: '审计系统成功启动'
+                    }
+                ];
+                
+                activityList.innerHTML = activities.map(activity => `
+                    <li class="activity-item">
+                        <div class="activity-icon">${activity.icon}</div>
+                        <div class="activity-content">
+                            <div class="activity-title">${activity.title}</div>
+                            <div class="activity-time">${activity.time}</div>
+                        </div>
+                    </li>
+                `).join('');
+                
+                activityLoading.style.display = 'none';
+            }, 1000);
+        }
+        
+        // 显示提示消息
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            const flashMessages = document.getElementById('flash-messages');
+            flashMessages.appendChild(alertDiv);
+            
+            // 5秒后自动消失
+            setTimeout(() => {
+                alertDiv.style.opacity = '0';
+                alertDiv.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 300);
+            }, 5000);
+        }
+        
+        // 卡片悬停效果
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // 按钮点击效果
+        document.querySelectorAll('.nav-btn, .action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
